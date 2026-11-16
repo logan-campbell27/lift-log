@@ -5,20 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lift Log</title>
 <style>
-:root{--bg:#f1f2ee;--card:#fff;--ink:#17211b;--mute:#6b766f;--line:#dde1db;--acc:#e2531f;--accink:#fff;--ok:#2f7d4f;
+:root{--bg:#f1f3f6;--card:#fff;--ink:#16202e;--mute:#667385;--line:#dce1e8;--acc:#2563eb;--accink:#fff;--ok:#1f7a4d;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121815;--card:#1b2420;--ink:#eef1ec;--mute:#94a097;--line:#2b3731;--acc:#ff7a45;--accink:#1a0d06;--ok:#6fcf97;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#121815;--card:#1b2420;--ink:#eef1ec;--mute:#94a097;--line:#2b3731;--acc:#ff7a45;--accink:#1a0d06;--ok:#6fcf97;color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10161f;--card:#192230;--ink:#eaeff6;--mute:#93a0b3;--line:#2a3646;--acc:#6ea0ff;--accink:#071533;--ok:#6fcf97;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#10161f;--card:#192230;--ink:#eaeff6;--mute:#93a0b3;--line:#2a3646;--acc:#6ea0ff;--accink:#071533;--ok:#6fcf97;color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:16px/1.4 "Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
-h1,h2,h3{margin:0;font-weight:700;letter-spacing:.01em}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+h1,h2,h3{margin:0;font-weight:700}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
-input,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;min-width:0}
-input:focus,textarea:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+input,textarea,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;min-width:0}
+input:focus,textarea:focus,select:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
 main{max-width:520px;margin:0 auto;padding:14px 14px 90px}
-.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
 .top h1{font-size:28px}
 .btn{background:var(--acc);color:var(--accink);border-radius:12px;padding:11px 16px;font-weight:700}
 .btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
@@ -37,11 +37,15 @@ main{max-width:520px;margin:0 auto;padding:14px 14px 90px}
 .dots{display:flex;gap:3px;height:7px}
 .chip{display:inline-block;padding:4px 10px;border-radius:99px;border:1px solid var(--line);background:var(--bg);font-size:14px;margin:0 6px 6px 0;color:var(--ink)}
 .chip.on{background:var(--acc);color:var(--accink);border-color:var(--acc)}
-.chip.sm{padding:2px 8px;font-size:13px;margin:0 4px 0 0}
+.chip.sm{padding:2px 8px;font-size:13px;margin:0 4px 4px 0}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:8px;white-space:nowrap}
+.tabs .chip{margin:0;padding:8px 14px;flex:none}
+.tabs .chip.sm{padding:5px 11px}
 .sub{color:var(--mute);font-size:14px}
 .row{display:flex;gap:8px;align-items:center}
 .row>*{flex:1}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.stats.two{grid-template-columns:repeat(2,1fr)}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px}
 .stat b{display:block;font-size:24px}
 nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
@@ -55,8 +59,8 @@ nav button.on{color:var(--acc)}
 .set span{color:var(--mute);text-align:center}
 .set .x{height:40px;color:var(--mute);font-size:20px}
 .hint{color:var(--ok);font-size:14px;min-height:18px;margin-top:4px}
-.ex .h{display:flex;gap:8px}
-.link{color:var(--acc);font-weight:600;padding:8px 0}
+.ex .h{display:flex;gap:8px;align-items:center}
+.link{color:var(--acc);font-weight:600;padding:8px 10px 8px 0}
 .danger{color:#c0392b}
 .wk{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
 .wk h3{font-size:19px}
@@ -67,41 +71,39 @@ nav button.on{color:var(--acc)}
 textarea.big{min-height:110px;font-size:13px;font-family:ui-monospace,monospace}
 svg.spark{width:100%;height:auto;display:block}
 .pr{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left}
+.tr{padding:6px 0;border-top:1px solid var(--line)}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <nav id="nav"></nav>
 <div class="ed" id="ed" hidden></div>
-<datalist id="exlist"></datalist>
 <script>
 (function(){
-var KEY='liftlog.v1',MU=['Chest','Back','Shoulders','Biceps','Triceps','Forearms','Quads','Hamstrings','Glutes','Calves','Core','Cardio'];
-var S={w:[],unit:'lb'};
-try{var raw=localStorage.getItem(KEY);if(raw){var p=JSON.parse(raw);if(p&&p.w)S=p}}catch(e){}
+var KEY='liftlog.v1',BASE=['Chest','Back','Shoulders','Biceps','Triceps','Forearms','Quads','Hamstrings','Glutes','Calves','Core','Cardio'];
+var S;function load(o){var d={w:[],unit:'lb',lib:{},tpl:[],mus:[],day:{},bw:[]};for(var k in d)if(o&&o[k]!==undefined)d[k]=o[k];S=d}
+load();try{var p=JSON.parse(localStorage.getItem(KEY));if(p&&p.w)load(p)}catch(e){}
+S.w.forEach(function(w){delete w.bw;w.ex.forEach(function(e){e.mu=e.mu||[];var k=e.n.trim().toLowerCase();if(k&&!S.lib[k])S.lib[k]={n:e.n.trim(),mu:e.mu.slice()}})});
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 var $=function(s){return document.querySelector(s)};
 function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 var today=ymd(new Date()),sel=today,cur=new Date();cur.setDate(1);
-var tab='cal',pex=null,draft=null,editingId=null;
+var tab='cal',ptab='ex',pex=null,RG=90,draft=null,editingId=null;
 var MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
-function fmtDate(s){var d=new Date(s+'T12:00:00');return d.toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'})}
+function fmtDate(s){return new Date(s+'T12:00:00').toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'})}
 function fnum(n){return Math.round(n*10)/10}
-function vol(w){var v=0;w.ex.forEach(function(e){e.sets.forEach(function(s){v+=(+s.w||0)*(+s.r||0)})});return v}
-function e1(s){var w=+s.w||0,r=+s.r||0;return r>1?w*(1+r/30):w}
+function ALL(){return BASE.concat(S.mus)}
 function sets(e){return e.sets.filter(function(s){return s.w!==''||s.r!==''})}
-function topSet(e){var b=null;sets(e).forEach(function(s){if(!b||e1(s)>e1(b))b=s});return b}
+function topSet(e){var b=null;sets(e).forEach(function(s){var w=+s.w||0,r=+s.r||0;if(!b||w>(+b.w||0)||(w===(+b.w||0)&&r>(+b.r||0)))b=s});return b}
+function known(){return Object.keys(S.lib).map(function(k){return S.lib[k].n}).sort(function(a,b){return a.localeCompare(b)})}
 function find(n,before){var k=n.trim().toLowerCase();if(!k)return null;var best=null;S.w.forEach(function(w){if(before&&w.date>=before)return;if(editingId&&w.id===editingId)return;w.ex.forEach(function(e){if(e.n.trim().toLowerCase()===k&&(!best||w.date>best.d))best={d:w.date,e:e}})});return best}
 function hint(n){var f=find(n,draft&&draft.date);if(!f)return'';var t=topSet(f.e);return t?'Last time ('+f.d.slice(5)+'): '+sets(f.e).length+' sets, top '+t.w+' '+S.unit+' × '+t.r:''}
+function chips(list,on,attr,x){return list.map(function(m){return'<button class="chip'+(on.indexOf(m)>-1?' on':'')+'" '+attr+'="'+(x!=null?x+'|':'')+esc(m)+'">'+esc(m)+'</button>'}).join('')+'<button class="chip" data-addmu="'+(x!=null?x:-1)+'">＋ Add</button>'}
 
 function render(){
- var h='';
- if(tab==='cal')h=cal();else if(tab==='prog')h=prog();else h=sett();
- $('#app').innerHTML=h;
- $('#nav').innerHTML=[['cal','Calendar'],['prog','Progress'],['set','Settings']].map(function(t){return'<button data-tab="'+t[0]+'" class="'+(tab===t[0]?'on':'')+'">'+t[1]+'</button>'}).join('');
- var names={};S.w.forEach(function(w){w.ex.forEach(function(e){if(e.n.trim())names[e.n.trim()]=1})});
- $('#exlist').innerHTML=Object.keys(names).map(function(n){return'<option value="'+esc(n)+'">'}).join('');
+ $('#app').innerHTML=tab==='cal'?cal():tab==='prog'?prog():tab==='tpl'?tpls():sett();
+ $('#nav').innerHTML=[['cal','Calendar'],['prog','Progress'],['tpl','Templates'],['set','Settings']].map(function(t){return'<button data-tab="'+t[0]+'" class="'+(tab===t[0]?'on':'')+'">'+t[1]+'</button>'}).join('');
 }
 function cal(){
  var y=cur.getFullYear(),m=cur.getMonth(),first=new Date(y,m,1).getDay(),n=new Date(y,m+1,0).getDate();
@@ -111,106 +113,171 @@ function cal(){
  for(var d=1;d<=n;d++){var k=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'),c=(by[k]||[]).length;
   g+='<button class="day'+(k===today?' today':'')+(k===sel?' sel':'')+'" data-day="'+k+'" aria-label="'+k+(c?', '+c+' workouts':'')+'">'+d+'<span class="dots">'+(c?'<i class="dot"></i>':'')+(c>1?'<i class="dot"></i>':'')+'</span></button>'}
  var wk=new Date();wk.setDate(wk.getDate()-6);var ws=ymd(wk),mp=y+'-'+String(m+1).padStart(2,'0');
- var nw=S.w.filter(function(w){return w.date>=ws&&w.date<=today}),nm=S.w.filter(function(w){return w.date.slice(0,7)===mp});
- var v=nw.reduce(function(a,w){return a+vol(w)},0);
- var h='<div class="top"><h1>Lift Log</h1></div><div class="stats"><div class="stat"><b>'+nw.length+'</b><span class="sub">last 7 days</span></div><div class="stat"><b>'+nm.length+'</b><span class="sub">this month</span></div><div class="stat"><b>'+(v>9999?fnum(v/1000)+'k':Math.round(v))+'</b><span class="sub">'+S.unit+' lifted, 7 days</span></div></div>';
+ var nw=S.w.filter(function(w){return w.date>=ws&&w.date<=today}).length,nm=S.w.filter(function(w){return w.date.slice(0,7)===mp}).length;
+ var h='<div class="top"><h1>Lift Log</h1></div><div class="stats two"><div class="stat"><b>'+nw+'</b><span class="sub">workouts, last 7 days</span></div><div class="stat"><b>'+nm+'</b><span class="sub">workouts this month</span></div></div>';
  h+='<div class="mon"><button data-mon="-1" class="btn ghost" aria-label="Previous month">‹</button><h2>'+MN[m]+' '+y+'</h2><button data-mon="1" class="btn ghost" aria-label="Next month">›</button></div><div class="grid">'+g+'</div>';
  h+='<div class="top" style="margin-top:16px"><h2 style="font-size:20px">'+fmtDate(sel)+'</h2><button class="btn" data-new="1">Log workout</button></div>';
+ h+='<div class="card"><label class="lab" style="margin-top:0" for="steps">Steps</label><input id="steps" inputmode="numeric" data-steps="1" placeholder="Steps for this day" value="'+esc(S.day[sel]||'')+'">'+(S.tpl.length?'<select data-tpl="1" style="margin-top:10px" aria-label="Start from template"><option value="">Start a workout from a template…</option>'+S.tpl.map(function(t){return'<option value="'+t.id+'">'+esc(t.name)+'</option>'}).join('')+'</select>':'')+'</div>';
  var l=by[sel]||[];
  if(!l.length)h+='<div class="empty">No workouts logged this day.</div>';
  l.forEach(function(w){
-  h+='<div class="card"><div class="wk"><div><h3>'+esc(w.name||'Workout')+'</h3><div style="margin-top:4px">'+w.mu.map(function(x){return'<span class="chip sm">'+x+'</span>'}).join('')+'</div></div><button class="link" data-edit="'+w.id+'">Edit</button></div>';
-  h+='<div class="sub" style="margin-top:6px">'+(w.dur?w.dur+' min · ':'')+(w.bw?'body '+w.bw+' '+S.unit+' · ':'')+Math.round(vol(w))+' '+S.unit+' volume</div><ul class="exl">'+w.ex.map(function(e){var t=topSet(e);return'<li><b>'+esc(e.n||'Exercise')+'</b> <span class="sub">'+sets(e).length+' sets'+(t?', top '+t.w+' × '+t.r:'')+'</span></li>'}).join('')+'</ul>'+(w.notes?'<div class="sub" style="margin-top:6px">'+esc(w.notes)+'</div>':'')+'<button class="link" data-repeat="'+w.id+'">Repeat on another day</button></div>'});
+  var meta=[];if(w.dur)meta.push(w.dur+' min');if(w.hrL||w.hrH)meta.push('HR '+(w.hrL||'?')+'–'+(w.hrH||'?'));if(w.cal)meta.push(w.cal+' kcal');
+  h+='<div class="card"><div class="wk"><div><h3>'+esc(w.name||'Workout')+'</h3><div style="margin-top:4px">'+w.mu.map(function(x){return'<span class="chip sm">'+esc(x)+'</span>'}).join('')+'</div></div><button class="link" data-edit="'+w.id+'">Edit</button></div>';
+  h+=(meta.length?'<div class="sub">'+meta.join(' · ')+'</div>':'')+'<ul class="exl">'+w.ex.map(function(e){var t=topSet(e);return'<li><b>'+esc(e.n||'Exercise')+'</b> <span class="sub">'+sets(e).length+' sets'+(t?', top '+t.w+' × '+t.r:'')+(e.mu.length?' · '+esc(e.mu.join(', ')):'')+'</span></li>'}).join('')+'</ul>'+(w.notes?'<div class="sub" style="margin-top:6px">'+esc(w.notes)+'</div>':'')+'<button class="link" data-repeat="'+w.id+'">Repeat on another day</button></div>'});
  return h;
 }
-function prog(){
- if(pex)return pdetail(pex);
- var m={};S.w.forEach(function(w){w.ex.forEach(function(e){var k=e.n.trim();if(!k)return;var o=m[k.toLowerCase()]=m[k.toLowerCase()]||{n:k,c:0,best:0};o.c++;var t=topSet(e);if(t)o.best=Math.max(o.best,+t.w||0)})});
- var a=Object.keys(m).map(function(k){return m[k]}).sort(function(x,y){return y.c-x.c});
- var h='<div class="top"><h1>Progress</h1></div>';
- if(!a.length)return h+'<div class="empty">Log a workout and your exercises will show up here with trends over time.</div>';
- return h+a.map(function(o){return'<button class="card pr" data-ex="'+esc(o.n.toLowerCase())+'"><span><b>'+esc(o.n)+'</b><br><span class="sub">'+o.c+' session'+(o.c>1?'s':'')+'</span></span><span><b>'+o.best+' '+S.unit+'</b><br><span class="sub">heaviest set</span></span></button>'}).join('');
+function tpls(){
+ var h='<div class="top"><h1>Templates</h1></div>';
+ if(!S.tpl.length)return h+'<div class="empty">No templates yet. Open a workout and tap “Save as template” to create one.</div>';
+ return h+S.tpl.map(function(t){return'<div class="card"><h3>'+esc(t.name)+'</h3><div style="margin:4px 0">'+t.mu.map(function(x){return'<span class="chip sm">'+esc(x)+'</span>'}).join('')+'</div><ul class="exl">'+t.ex.map(function(e){return'<li><b>'+esc(e.n)+'</b> <span class="sub">'+e.k+' sets'+(e.mu.length?' · '+esc(e.mu.join(', ')):'')+'</span></li>'}).join('')+'</ul><div style="margin-top:6px"><button class="link" data-usetpl="'+t.id+'">Start on '+fmtDate(sel).split(',')[1].trim()+'</button><button class="link" data-rentpl="'+t.id+'">Rename</button><button class="link danger" data-deltpl="'+t.id+'">Delete</button></div></div>'}).join('');
 }
+function chart(title,ss){
+ var ds=[],vs=[];ss.forEach(function(s){s.p.forEach(function(p){if(ds.indexOf(p.d)<0)ds.push(p.d);vs.push(p.v)})});ds.sort();
+ if(!ds.length)return'<div class="card empty">No data in this range yet.</div>';
+ var mx=Math.max.apply(null,vs),mn=Math.min.apply(null,vs),rg=mx-mn||1,X=function(d){return ds.length>1?10+ds.indexOf(d)*280/(ds.length-1):150},Y=function(v){return 90-(v-mn)/rg*70};
+ return'<div class="card"><div class="sub">'+title+'</div><svg class="spark" viewBox="0 0 300 100" role="img" aria-label="'+title+'">'+ss.map(function(s){return'<polyline fill="none" stroke="'+s.c+'" stroke-width="3" stroke-linejoin="round" points="'+s.p.map(function(p){return X(p.d)+','+Y(p.v)}).join(' ')+'"/>'+s.p.map(function(p){return'<circle cx="'+X(p.d)+'" cy="'+Y(p.v)+'" r="3.5" fill="'+s.c+'"/>'}).join('')}).join('')+'</svg><div class="row sub"><span>'+ds[0]+' · low '+fnum(mn)+'</span><span style="text-align:right">'+ds[ds.length-1]+' · high '+fnum(mx)+'</span></div></div>'}
+function st(a){return'<div class="stats">'+a.map(function(x){return'<div class="stat"><b>'+x[0]+'</b><span class="sub">'+x[1]+'</span></div>'}).join('')+'</div>'}
+function avg(a){return a.length?a.reduce(function(x,y){return x+y},0)/a.length:0}
+function trs(a){return a.length?'<div class="card">'+a.map(function(r){return'<div class="row tr"><b>'+r[0]+'</b><span class="sub" style="text-align:right">'+r[1]+'</span></div>'}).join('')+'</div>':''}
+function prog(){
+ var T=[['ex','Exercises'],['wk','Workouts'],['steps','Steps'],['hr','Heart rate'],['cal','Calories'],['body','Body']],A='var(--acc)',M='var(--mute)';
+ var h='<div class="top"><h1>Progress</h1></div><div class="tabs">'+T.map(function(t){return'<button class="chip'+(ptab===t[0]?' on':'')+'" data-pt="'+t[0]+'">'+t[1]+'</button>'}).join('')+'</div>';
+ if(ptab==='ex'&&pex)return h+pdetail(pex);
+ var c=new Date();c.setDate(c.getDate()-RG);var cut=RG?ymd(c):'0';
+ if(ptab!=='ex')h+='<div class="tabs">'+[[30,'30 days'],[90,'90 days'],[365,'1 year'],[0,'All time']].map(function(r){return'<button class="chip sm'+(RG===r[0]?' on':'')+'" data-rg="'+r[0]+'">'+r[1]+'</button>'}).join('')+'</div>';
+ var W=S.w.filter(function(w){return w.date>=cut}).sort(function(a,b){return a.date<b.date?-1:1});
+ if(ptab==='ex'){
+  var m={};S.w.forEach(function(w){w.ex.forEach(function(e){var k=e.n.trim().toLowerCase();if(!k)return;var o=m[k]=m[k]||{n:e.n.trim(),c:0,b:0};o.c++;var t=topSet(e);if(t)o.b=Math.max(o.b,+t.w||0)})});
+  var a=Object.keys(m).sort(function(x,y){return m[y].c-m[x].c});
+  return h+(a.length?a.map(function(k){var o=m[k];return'<button class="card pr" data-ex="'+esc(k)+'"><span><b>'+esc(o.n)+'</b><br><span class="sub">'+o.c+' session'+(o.c>1?'s':'')+'</span></span><span><b>'+o.b+' '+S.unit+'</b><br><span class="sub">top weight</span></span></button>'}).join(''):'<div class="empty">Log a workout to see exercise progress.</div>')}
+ if(ptab==='wk'){
+  var ds=W.filter(function(w){return+w.dur}),mt={};
+  W.forEach(function(w){w.mu.forEach(function(x){(mt[x]=mt[x]||{w:0,s:0,r:0}).w++});w.ex.forEach(function(e){e.mu.forEach(function(x){var o=mt[x]=mt[x]||{w:0,s:0,r:0};sets(e).forEach(function(s){o.s++;o.r+=+s.r||0})})})});
+  return h+st([[W.length,'workouts'],[ds.reduce(function(a,w){return a+ +w.dur},0),'total minutes'],[Math.round(avg(ds.map(function(w){return+w.dur}))),'avg minutes']])+chart('Workout length (minutes)',[{c:A,p:ds.map(function(w){return{d:w.date,v:+w.dur}})}])+'<h3 style="margin:6px 0">By muscle group</h3>'+(Object.keys(mt).length?trs(Object.keys(mt).sort(function(x,y){return mt[y].s-mt[x].s}).map(function(x){return[esc(x),mt[x].w+' workouts · '+mt[x].s+' sets · '+mt[x].r+' reps']})):'<div class="empty">Tag exercises with muscles to see sets and reps by group.</div>')}
+ if(ptab==='steps'){
+  var sd=Object.keys(S.day).filter(function(d){return d>=cut&&+S.day[d]>0}).sort();
+  return h+st([[Math.round(avg(sd.map(function(d){return+S.day[d]}))),'avg per day'],[sd.length?Math.max.apply(null,sd.map(function(d){return+S.day[d]})):0,'best day'],[sd.length,'days logged']])+chart('Steps per day',[{c:A,p:sd.map(function(d){return{d:d,v:+S.day[d]}})}])+trs(sd.slice().reverse().map(function(d){return[d,(+S.day[d]).toLocaleString()+' steps']}))}
+ if(ptab==='hr'){
+  var hw=W.filter(function(w){return+w.hrL||+w.hrH});
+  return h+chart('Heart rate range per workout (bpm): high in blue, low in gray',[{c:M,p:hw.filter(function(w){return+w.hrL}).map(function(w){return{d:w.date,v:+w.hrL}})},{c:A,p:hw.filter(function(w){return+w.hrH}).map(function(w){return{d:w.date,v:+w.hrH}})}])+trs(hw.slice().reverse().map(function(w){return[w.date+' · '+esc(w.name),(w.hrL||'?')+'–'+(w.hrH||'?')+' bpm']}))}
+ if(ptab==='cal'){
+  var cw=W.filter(function(w){return+w.cal}),bm={};
+  cw.forEach(function(w){var l=w.mu.length?w.mu:['Unassigned'];l.forEach(function(x){bm[x]=(bm[x]||0)+ +w.cal/l.length})});
+  return h+st([[cw.reduce(function(a,w){return a+ +w.cal},0),'total kcal'],[Math.round(avg(cw.map(function(w){return+w.cal}))),'avg per workout'],[cw.length,'workouts logged']])+chart('Calories burned per workout',[{c:A,p:cw.map(function(w){return{d:w.date,v:+w.cal}})}])+'<h3 style="margin:6px 0">By muscle group</h3><div class="sub" style="margin-bottom:6px">Each workout’s calories are split evenly across the muscles you tagged on it.</div>'+trs(Object.keys(bm).sort(function(x,y){return bm[y]-bm[x]}).map(function(x){return[esc(x),Math.round(bm[x])+' kcal']}))}
+ var B=S.bw.filter(function(b){return b.d>=cut}).sort(function(a,b){return a.d<b.d?-1:1});
+ function bs(k,t){return chart(t,[{c:A,p:B.filter(function(b){return+b[k]}).map(function(b){return{d:b.d,v:+b[k]}})}])}
+ h+='<div class="card"><b>Add an entry</b><div class="row"><div><label class="lab" for="b-d">Date</label><input id="b-d" type="date" value="'+today+'"></div><div><label class="lab" for="b-w">Weight ('+S.unit+')</label><input id="b-w" inputmode="decimal"></div></div><div class="row"><div><label class="lab" for="b-f">Body fat ('+S.unit+', optional)</label><input id="b-f" inputmode="decimal"></div><div><label class="lab" for="b-m">Muscle ('+S.unit+', optional)</label><input id="b-m" inputmode="decimal"></div></div><button class="btn block" style="margin-top:10px" data-addbw="1">Save entry</button></div>';
+ h+=bs('w','Body weight ('+S.unit+')');
+ if(B.some(function(b){return+b.f}))h+=bs('f','Body fat ('+S.unit+')');
+ if(B.some(function(b){return+b.m}))h+=bs('m','Muscle ('+S.unit+')');
+ return h+trs(B.slice().reverse().map(function(b){return[b.d,[b.w?b.w+' '+S.unit:'',b.f?'fat '+b.f:'',b.m?'muscle '+b.m:''].filter(Boolean).join(' · ')+' <button class="link danger" data-delbw="'+b.d+'" aria-label="Delete entry">×</button>']}))}
 function pdetail(k){
  var pts=[],name=k;
- S.w.slice().sort(function(a,b){return a.date<b.date?-1:1}).forEach(function(w){w.ex.forEach(function(e){if(e.n.trim().toLowerCase()===k){name=e.n.trim();var t=topSet(e);if(t)pts.push({d:w.date,e:e1(t),w:+t.w,r:+t.r,v:sets(e).reduce(function(a,s){return a+(+s.w||0)*(+s.r||0)},0)})}})});
+ S.w.slice().sort(function(a,b){return a.date<b.date?-1:1}).forEach(function(w){w.ex.forEach(function(e){if(e.n.trim().toLowerCase()===k){name=e.n.trim();var t=topSet(e);if(t)pts.push({d:w.date,v:+t.w||0,r:+t.r||0,n:sets(e).length})}})});
  var h='<div class="top"><h1 style="font-size:24px">'+esc(name)+'</h1><button class="btn ghost" data-back="1">Back</button></div>';
  if(!pts.length)return h+'<div class="empty">No sets logged yet.</div>';
- var mx=Math.max.apply(null,pts.map(function(p){return p.e})),mn=Math.min.apply(null,pts.map(function(p){return p.e})),rg=mx-mn||1;
- var xy=pts.map(function(p,i){return[pts.length>1?10+i*280/(pts.length-1):150,90-(p.e-mn)/rg*70]});
- var pr=pts.reduce(function(a,p){return p.w>a.w?p:a},pts[0]);
- h+='<div class="card"><div class="sub">Estimated one-rep max per session ('+S.unit+')</div><svg class="spark" viewBox="0 0 300 100" role="img" aria-label="Trend"><polyline fill="none" stroke="var(--acc)" stroke-width="3" stroke-linejoin="round" points="'+xy.map(function(p){return p.join(',')}).join(' ')+'"/>'+xy.map(function(p){return'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="var(--acc)"/>'}).join('')+'</svg><div class="row sub"><span>'+pts[0].d+'</span><span style="text-align:right">'+pts[pts.length-1].d+'</span></div></div>';
- h+='<div class="stats"><div class="stat"><b>'+pr.w+'</b><span class="sub">top weight, '+S.unit+'</span></div><div class="stat"><b>'+fnum(mx)+'</b><span class="sub">best est. 1RM</span></div><div class="stat"><b>'+pts.length+'</b><span class="sub">sessions</span></div></div>';
- h+='<div class="card">'+pts.slice().reverse().map(function(p){return'<div class="row" style="padding:5px 0;border-top:1px solid var(--line)"><span>'+p.d+'</span><span style="text-align:right">'+p.w+' × '+p.r+' · vol '+Math.round(p.v)+'</span></div>'}).join('')+'</div>';
- return h;
+ var top=Math.max.apply(null,pts.map(function(p){return p.v}));
+ return h+chart('Top weight per session ('+S.unit+')',[{c:'var(--acc)',p:pts}])+st([[top,'all-time top ('+S.unit+')'],[pts[pts.length-1].v,'last session'],[pts.length,'sessions']])+trs(pts.slice().reverse().map(function(p){return[p.d,p.v+' '+S.unit+' × '+p.r+' · '+p.n+' sets']}));
 }
 function sett(){
+ var lib=Object.keys(S.lib).sort();
  return'<div class="top"><h1>Settings</h1></div><div class="card"><span class="lab" style="margin-top:0">Weight unit</span><div class="row"><button class="btn '+(S.unit==='lb'?'':'ghost')+'" data-unit="lb">Pounds</button><button class="btn '+(S.unit==='kg'?'':'ghost')+'" data-unit="kg">Kilograms</button></div><p class="sub">Changing the unit only changes the label. Saved numbers are not converted.</p></div>'+
+ '<div class="card"><b>Exercise library</b><p class="sub">Rename to fix a name everywhere in your history. Renaming to an existing name merges the two.</p>'+(lib.length?lib.map(function(k){return'<div class="row tr"><span>'+esc(S.lib[k].n)+'<br><span class="sub">'+(esc(S.lib[k].mu.join(', '))||'no muscles set')+'</span></span><button class="link" style="text-align:right" data-renex="'+esc(k)+'">Rename</button></div>'}).join(''):'<div class="sub">Exercises appear here after you save a workout.</div>')+'</div>'+
+ '<div class="card"><b>Custom muscles</b>'+(S.mus.length?S.mus.map(function(m){return'<div class="row tr"><span>'+esc(m)+'</span><button class="link danger" style="text-align:right" data-delmu="'+esc(m)+'">Remove</button></div>'}).join(''):'<p class="sub">None yet. Add them with “＋ Add” in the muscle picker.</p>')+'</div>'+
  '<div class="card"><b>Back up and restore</b><p class="sub">Your data lives only in this browser on this phone. Copy a backup to keep it safe, or paste one to restore it.</p><textarea id="bk" class="big" placeholder="Paste a backup here to restore"></textarea><div class="row" style="margin-top:8px"><button class="btn ghost" data-copy="1">Copy backup</button><button class="btn" data-restore="1">Restore</button></div><div class="sub" id="bkmsg" style="margin-top:6px"></div></div>'+
  '<div class="card"><b>'+S.w.length+' workouts saved</b><br><button class="link danger" data-wipe="1">Delete all data</button></div>';
 }
 
 /* editor */
 function newDraft(date,from){
- var d={id:'w'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),date:date,name:'',mu:[],dur:'',bw:'',notes:'',ex:[]};
- if(from){d.name=from.name;d.mu=from.mu.slice();d.ex=from.ex.map(function(e){return{n:e.n,sets:e.sets.map(function(s){return{w:s.w,r:s.r}})}})}
+ var d={id:'w'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),date:date,name:'',mu:[],dur:'',hrL:'',hrH:'',cal:'',notes:'',ex:[]};
+ if(from){d.name=from.name;d.mu=from.mu.slice();d.ex=from.ex.map(function(e){return{n:e.n,mu:(e.mu||[]).slice(),sets:e.sets.map(function(s){return{w:s.w,r:s.r}})}})}
  return d}
+function fromTpl(t,date){var d=newDraft(date);d.name=t.name;d.mu=t.mu.slice();d.ex=t.ex.map(function(e){var s=[];for(var i=0;i<e.k;i++)s.push({w:'',r:''});return{n:e.n,mu:e.mu.slice(),sets:s}});return d}
 function openEd(d,id){draft=d;editingId=id||null;edr();$('#ed').hidden=false;$('#ed').scrollTop=0}
 function edr(){
- var d=draft;
+ var d=draft,KN=known();
  var h='<div class="in"><div class="edtop"><button class="link" data-cancel="1">Cancel</button><h2>'+(editingId?'Edit workout':'New workout')+'</h2><button class="btn" data-save="1">Save</button></div>';
  h+='<label class="lab" for="f-date">Date</label><input id="f-date" type="date" data-k="date" value="'+d.date+'">';
  h+='<label class="lab" for="f-name">Workout name</label><input id="f-name" data-k="name" placeholder="Push day, Legs, Full body…" value="'+esc(d.name)+'">';
- h+='<span class="lab">Muscles hit</span><div>'+MU.map(function(m){return'<button class="chip'+(d.mu.indexOf(m)>-1?' on':'')+'" data-mu="'+m+'">'+m+'</button>'}).join('')+'</div>';
- h+='<div class="row"><div><label class="lab" for="f-dur">Duration (min)</label><input id="f-dur" data-k="dur" inputmode="numeric" value="'+esc(d.dur)+'"></div><div><label class="lab" for="f-bw">Body weight ('+S.unit+')</label><input id="f-bw" data-k="bw" inputmode="decimal" value="'+esc(d.bw)+'"></div></div>';
+ h+='<span class="lab">Muscles hit</span><div>'+chips(ALL(),d.mu,'data-mu')+'</div>';
+ h+='<div class="row"><div><label class="lab" for="f-dur">Duration (min)</label><input id="f-dur" data-k="dur" inputmode="numeric" value="'+esc(d.dur)+'"></div><div><label class="lab" for="f-cal">Calories (optional)</label><input id="f-cal" data-k="cal" inputmode="numeric" value="'+esc(d.cal)+'"></div></div>';
+ h+='<div class="row"><div><label class="lab" for="f-hl">Heart rate low (optional)</label><input id="f-hl" data-k="hrL" inputmode="numeric" value="'+esc(d.hrL)+'"></div><div><label class="lab" for="f-hh">Heart rate high (optional)</label><input id="f-hh" data-k="hrH" inputmode="numeric" value="'+esc(d.hrH)+'"></div></div>';
  h+='<h3 style="margin:18px 0 8px">Exercises</h3>';
  d.ex.forEach(function(e,i){
-  h+='<div class="card ex"><div class="h"><input list="exlist" data-xn="'+i+'" placeholder="Exercise name" aria-label="Exercise name" value="'+esc(e.n)+'"><button class="x link danger" data-rmex="'+i+'" aria-label="Remove exercise">Remove</button></div><div class="hint" id="hint'+i+'">'+esc(hint(e.n))+'</div>';
+  var inp=e.isnew||!KN.length||(e.n&&KN.indexOf(e.n)<0);
+  h+='<div class="card ex"><div class="h">'+(inp?'<input data-xn="'+i+'" placeholder="New exercise name" aria-label="New exercise name" value="'+esc(e.n)+'">':'<select data-xs="'+i+'" aria-label="Exercise"><option value="">Choose exercise…</option>'+KN.map(function(n){return'<option value="'+esc(n)+'"'+(n===e.n?' selected':'')+'>'+esc(n)+'</option>'}).join('')+'<option value="__new">＋ New exercise…</option></select>')+'<button class="link danger" data-rmex="'+i+'" aria-label="Remove exercise">Remove</button></div>'+(inp&&KN.length?'<button class="link" data-pick="'+i+'">Choose from my exercises</button>':'')+'<div class="hint" id="hint'+i+'">'+esc(hint(e.n))+'</div>';
+  h+='<span class="lab">Muscles for this exercise</span><div>'+chips(ALL(),e.mu,'data-xm',i)+'</div>';
   e.sets.forEach(function(s,j){h+='<div class="set"><span>'+(j+1)+'</span><input inputmode="decimal" placeholder="'+S.unit+'" aria-label="Weight, set '+(j+1)+'" data-x="'+i+'" data-s="'+j+'" data-f="w" value="'+esc(s.w)+'"><input inputmode="numeric" placeholder="reps" aria-label="Reps, set '+(j+1)+'" data-x="'+i+'" data-s="'+j+'" data-f="r" value="'+esc(s.r)+'"><button class="x" data-rmset="'+i+'.'+j+'" aria-label="Remove set">×</button></div>'});
   h+='<button class="link" data-addset="'+i+'">+ Add set</button></div>'});
  h+='<button class="btn ghost block" data-addex="1">+ Add exercise</button>';
  h+='<label class="lab" for="f-notes">Notes</label><textarea id="f-notes" data-k="notes" rows="3" placeholder="How did it feel? Effort, sleep, injuries…">'+esc(d.notes)+'</textarea>';
+ h+='<button class="btn ghost block" style="margin-top:12px" data-savetpl="1">Save as template</button>';
  if(editingId)h+='<button class="link danger" style="margin-top:16px" data-del="1">Delete this workout</button>';
  $('#ed').innerHTML=h+'</div>'}
 function closeEd(){$('#ed').hidden=true;draft=null;editingId=null;render()}
 function saveEd(){
- var d=draft;d.ex=d.ex.filter(function(e){return e.n.trim()||sets(e).length});d.ex.forEach(function(e){e.sets=sets(e)});
+ var d=draft,KN=known();
+ d.ex=d.ex.filter(function(e){return e.n.trim()||sets(e).length}).map(function(e){var n=e.n.trim(),c=KN.filter(function(k){return k.toLowerCase()===n.toLowerCase()})[0]||n;if(c)S.lib[c.toLowerCase()]={n:c,mu:e.mu.slice()};return{n:c,mu:e.mu.slice(),sets:sets(e)}});
  if(!d.name.trim())d.name=d.mu.length?d.mu.slice(0,2).join(' + '):'Workout';
  var i=S.w.findIndex(function(w){return w.id===d.id});if(i>-1)S.w[i]=d;else S.w.push(d);
  save();sel=d.date;var dt=new Date(d.date+'T12:00:00');cur=new Date(dt.getFullYear(),dt.getMonth(),1);closeEd()}
+function tog(a,v){var i=a.indexOf(v);if(i>-1)a.splice(i,1);else a.push(v)}
 
 document.addEventListener('input',function(ev){
- var t=ev.target;if(!draft||!$('#ed').contains(t))return;
+ var t=ev.target;
+ if(t.dataset.steps!=null){if(+t.value>0)S.day[sel]=t.value;else delete S.day[sel];save();return}
+ if(!draft||!$('#ed').contains(t))return;
  if(t.dataset.k)draft[t.dataset.k]=t.value;
  else if(t.dataset.xn!=null){var i=+t.dataset.xn;draft.ex[i].n=t.value;var el=$('#hint'+i);if(el)el.textContent=hint(t.value)}
  else if(t.dataset.f){draft.ex[+t.dataset.x].sets[+t.dataset.s][t.dataset.f]=t.value}
 });
+document.addEventListener('change',function(ev){
+ var t=ev.target;
+ if(t.dataset.tpl!=null){var tp=S.tpl.find(function(x){return x.id===t.value});if(tp)openEd(fromTpl(tp,sel));t.value='';return}
+ if(!draft||t.dataset.xs==null)return;var e=draft.ex[+t.dataset.xs];
+ if(t.value==='__new'){e.isnew=true;e.n='';e.mu=[];edr();var el=document.querySelector('[data-xn="'+t.dataset.xs+'"]');if(el)el.focus()}
+ else{e.n=t.value;e.isnew=false;var L=S.lib[t.value.toLowerCase()];e.mu=L?L.mu.slice():[];edr()}
+});
 document.addEventListener('click',function(ev){
  var b=ev.target.closest('button');if(!b)return;var D=b.dataset;
+ if(D.addmu!=null){var nm=(prompt('Name of the new muscle group:')||'').replace(/\|/g,'').trim();if(nm){if(ALL().map(function(x){return x.toLowerCase()}).indexOf(nm.toLowerCase())<0)S.mus.push(nm);save();if(draft){var tg=+D.addmu>=0?draft.ex[+D.addmu].mu:draft.mu;if(tg.indexOf(nm)<0)tg.push(nm);edr()}else render()}return}
  if(draft&&$('#ed').contains(b)){
   if(D.cancel)return closeEd();
   if(D.save)return saveEd();
-  if(D.mu){var k=draft.mu.indexOf(D.mu);if(k>-1)draft.mu.splice(k,1);else draft.mu.push(D.mu);return edr()}
-  if(D.addex!=null){draft.ex.push({n:'',sets:[{w:'',r:''}]});edr();var xs=document.querySelectorAll('[data-xn]');if(xs.length)xs[xs.length-1].focus();return}
+  if(D.mu){tog(draft.mu,D.mu);return edr()}
+  if(D.xm){var q=D.xm.split('|');tog(draft.ex[+q[0]].mu,q.slice(1).join('|'));return edr()}
+  if(D.addex!=null){draft.ex.push({n:'',mu:[],sets:[{w:'',r:''}]});edr();var xs=document.querySelectorAll('[data-xn],[data-xs]');if(xs.length)xs[xs.length-1].focus();return}
+  if(D.pick!=null){draft.ex[+D.pick].isnew=false;draft.ex[+D.pick].n='';return edr()}
   if(D.rmex!=null){draft.ex.splice(+D.rmex,1);return edr()}
   if(D.addset!=null){var e=draft.ex[+D.addset],l=e.sets[e.sets.length-1];e.sets.push({w:l?l.w:'',r:l?l.r:''});return edr()}
   if(D.rmset){var p=D.rmset.split('.');draft.ex[+p[0]].sets.splice(+p[1],1);return edr()}
+  if(D.savetpl){var ex=draft.ex.filter(function(x){return x.n.trim()});if(!ex.length){alert('Add at least one exercise first.');return}var nm2=(prompt('Template name:',draft.name)||'').trim();if(!nm2)return;S.tpl.push({id:'t'+Date.now().toString(36),name:nm2,mu:draft.mu.slice(),ex:ex.map(function(x){return{n:x.n.trim(),mu:x.mu.slice(),k:Math.max(1,x.sets.length)}})});save();alert('Template saved.');return}
   if(D.del){if(confirm('Delete this workout?')){S.w=S.w.filter(function(w){return w.id!==editingId});save();closeEd()}return}
   return}
  if(D.tab){tab=D.tab;pex=null;return render()}
+ if(D.pt){ptab=D.pt;pex=null;return render()}
+ if(D.rg!=null){RG=+D.rg;return render()}
  if(D.day){sel=D.day;return render()}
  if(D.mon){cur.setMonth(cur.getMonth()+ +D.mon);return render()}
  if(D.new)return openEd(newDraft(sel));
  if(D.edit){var w=S.w.find(function(x){return x.id===D.edit});if(w)openEd(JSON.parse(JSON.stringify(w)),w.id);return}
- if(D.repeat){var w2=S.w.find(function(x){return x.id===D.repeat});if(w2){var nd=newDraft(today,w2);nd.ex.forEach(function(e){e.sets.forEach(function(s){})});openEd(nd)}return}
+ if(D.repeat){var w2=S.w.find(function(x){return x.id===D.repeat});if(w2)openEd(newDraft(today,w2));return}
+ if(D.usetpl){var tp=S.tpl.find(function(x){return x.id===D.usetpl});if(tp)openEd(fromTpl(tp,sel));return}
+ if(D.rentpl){var t2=S.tpl.find(function(x){return x.id===D.rentpl}),n2=(prompt('Rename template:',t2.name)||'').trim();if(n2){t2.name=n2;save();render()}return}
+ if(D.deltpl){if(confirm('Delete this template? Logged workouts are not affected.')){S.tpl=S.tpl.filter(function(x){return x.id!==D.deltpl});save();render()}return}
  if(D.ex){pex=D.ex;return render()}
  if(D.back){pex=null;return render()}
+ if(D.addbw){var dv=$('#b-d').value,wv=$('#b-w').value,fv=$('#b-f').value,mv=$('#b-m').value;if(!dv||!(+wv>0)){alert('Enter a date and a weight.');return}S.bw=S.bw.filter(function(x){return x.d!==dv});S.bw.push({d:dv,w:wv,f:fv,m:mv});save();return render()}
+ if(D.delbw){S.bw=S.bw.filter(function(x){return x.d!==D.delbw});save();return render()}
  if(D.unit){S.unit=D.unit;save();return render()}
- if(D.copy){var js=JSON.stringify(S),ta=$('#bk');ta.value=js;ta.select();var ok=false;try{ok=document.execCommand('copy')}catch(e){}
+ if(D.renex){var o=S.lib[D.renex],nn=(prompt('Rename “'+o.n+'” to:',o.n)||'').trim();if(nn){var nk=nn.toLowerCase();function rn(e){if(e.n.trim().toLowerCase()===D.renex)e.n=nn}S.w.forEach(function(w){w.ex.forEach(rn)});S.tpl.forEach(function(t){t.ex.forEach(rn)});var tg2=S.lib[nk]||{n:nn,mu:o.mu};tg2.n=nn;S.lib[nk]=tg2;if(nk!==D.renex)delete S.lib[D.renex];save();render()}return}
+ if(D.delmu){if(confirm('Remove “'+D.delmu+'” from the muscle list? Past workouts keep it.')){S.mus=S.mus.filter(function(m){return m!==D.delmu});save();render()}return}
+ if(D.copy){var js=JSON.stringify(S),ta=$('#bk');ta.value=js;ta.select();try{document.execCommand('copy')}catch(e){}
   try{if(navigator.clipboard)navigator.clipboard.writeText(js)}catch(e){}
   $('#bkmsg').textContent='Backup is in the box above. Copied if your phone allowed it; otherwise press and hold to copy.';return}
- if(D.restore){try{var o=JSON.parse($('#bk').value);if(!o||!Array.isArray(o.w))throw 0;if(confirm('Replace all current data with this backup?')){S={w:o.w,unit:o.unit||'lb'};save();render()}}catch(e){$('#bkmsg').textContent='That doesn’t look like a valid backup. Paste the full text you copied.'}return}
- if(D.wipe){if(confirm('Delete all workouts on this device? This can’t be undone.')){S.w=[];save();render()}return}
+ if(D.restore){try{var o2=JSON.parse($('#bk').value);if(!o2||!Array.isArray(o2.w))throw 0;if(confirm('Replace all current data with this backup?')){load(o2);save();render()}}catch(e){$('#bkmsg').textContent='That doesn’t look like a valid backup. Paste the full text you copied.'}return}
+ if(D.wipe){if(confirm('Delete all data on this device? This can’t be undone.')){load();save();render()}return}
 });
 render();
 })();
