@@ -72,6 +72,8 @@ textarea.big{min-height:110px;font-size:13px;font-family:ui-monospace,monospace}
 svg.spark{width:100%;height:auto;display:block}
 .pr{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left}
 .tr{padding:6px 0;border-top:1px solid var(--line)}
+input[type=date]{-webkit-appearance:none;appearance:none;min-height:44px}
+summary{cursor:pointer;color:var(--acc);font-weight:600;padding:6px 0}
 </style>
 </head>
 <body>
@@ -89,7 +91,7 @@ var $=function(s){return document.querySelector(s)};
 function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 var today=ymd(new Date()),sel=today,cur=new Date();cur.setDate(1);
-var tab='cal',ptab='ex',pex=null,RG=90,draft=null,editingId=null;
+var tab='cal',ptab='ex',pex=null,RG=90,draft=null,editingId=null,tplMode=false;
 var MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
 function fmtDate(s){return new Date(s+'T12:00:00').toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'})}
 function fnum(n){return Math.round(n*10)/10}
@@ -102,8 +104,10 @@ function hint(n){var f=find(n,draft&&draft.date);if(!f)return'';var t=topSet(f.e
 function chips(list,on,attr,x){return list.map(function(m){return'<button class="chip'+(on.indexOf(m)>-1?' on':'')+'" '+attr+'="'+(x!=null?x+'|':'')+esc(m)+'">'+esc(m)+'</button>'}).join('')+'<button class="chip" data-addmu="'+(x!=null?x:-1)+'">＋ Add</button>'}
 
 function render(){
+ var sl=[].map.call(document.querySelectorAll('.tabs'),function(e){return e.scrollLeft});
  $('#app').innerHTML=tab==='cal'?cal():tab==='prog'?prog():tab==='tpl'?tpls():sett();
  $('#nav').innerHTML=[['cal','Calendar'],['prog','Progress'],['tpl','Templates'],['set','Settings']].map(function(t){return'<button data-tab="'+t[0]+'" class="'+(tab===t[0]?'on':'')+'">'+t[1]+'</button>'}).join('');
+ document.querySelectorAll('.tabs').forEach(function(e,i){if(sl[i])e.scrollLeft=sl[i]});
 }
 function cal(){
  var y=cur.getFullYear(),m=cur.getMonth(),first=new Date(y,m,1).getDay(),n=new Date(y,m+1,0).getDate();
@@ -127,9 +131,9 @@ function cal(){
  return h;
 }
 function tpls(){
- var h='<div class="top"><h1>Templates</h1></div>';
- if(!S.tpl.length)return h+'<div class="empty">No templates yet. Open a workout and tap “Save as template” to create one.</div>';
- return h+S.tpl.map(function(t){return'<div class="card"><h3>'+esc(t.name)+'</h3><div style="margin:4px 0">'+t.mu.map(function(x){return'<span class="chip sm">'+esc(x)+'</span>'}).join('')+'</div><ul class="exl">'+t.ex.map(function(e){return'<li><b>'+esc(e.n)+'</b> <span class="sub">'+e.k+' sets'+(e.mu.length?' · '+esc(e.mu.join(', ')):'')+'</span></li>'}).join('')+'</ul><div style="margin-top:6px"><button class="link" data-usetpl="'+t.id+'">Start on '+fmtDate(sel).split(',')[1].trim()+'</button><button class="link" data-rentpl="'+t.id+'">Rename</button><button class="link danger" data-deltpl="'+t.id+'">Delete</button></div></div>'}).join('');
+ var h='<div class="top"><h1>Templates</h1><button class="btn" data-newtpl="1">New template</button></div>';
+ if(!S.tpl.length)return h+'<div class="empty">No templates yet. Tap “New template”, or save one from inside a workout.</div>';
+ return h+S.tpl.map(function(t){return'<div class="card"><h3>'+esc(t.name)+'</h3><div style="margin:4px 0">'+t.mu.map(function(x){return'<span class="chip sm">'+esc(x)+'</span>'}).join('')+'</div><details><summary>'+t.ex.length+' exercise'+(t.ex.length>1?'s':'')+'</summary><ul class="exl">'+t.ex.map(function(e){return'<li><b>'+esc(e.n)+'</b> <span class="sub">'+e.k+' sets'+(e.mu.length?' · '+esc(e.mu.join(', ')):'')+'</span></li>'}).join('')+'</ul></details><div style="margin-top:6px"><button class="link" data-usetpl="'+t.id+'">Start on '+fmtDate(sel).split(',')[1].trim()+'</button><button class="link" data-rentpl="'+t.id+'">Rename</button><button class="link danger" data-deltpl="'+t.id+'">Delete</button></div></div>'}).join('');
 }
 function chart(title,ss){
  var ds=[],vs=[];ss.forEach(function(s){s.p.forEach(function(p){if(ds.indexOf(p.d)<0)ds.push(p.d);vs.push(p.v)})});ds.sort();
@@ -161,12 +165,11 @@ function prog(){
   var hw=W.filter(function(w){return+w.hrL||+w.hrH});
   return h+chart('Heart rate range per workout (bpm): high in blue, low in gray',[{c:M,p:hw.filter(function(w){return+w.hrL}).map(function(w){return{d:w.date,v:+w.hrL}})},{c:A,p:hw.filter(function(w){return+w.hrH}).map(function(w){return{d:w.date,v:+w.hrH}})}])+trs(hw.slice().reverse().map(function(w){return[w.date+' · '+esc(w.name),(w.hrL||'?')+'–'+(w.hrH||'?')+' bpm']}))}
  if(ptab==='cal'){
-  var cw=W.filter(function(w){return+w.cal}),bm={};
-  cw.forEach(function(w){var l=w.mu.length?w.mu:['Unassigned'];l.forEach(function(x){bm[x]=(bm[x]||0)+ +w.cal/l.length})});
-  return h+st([[cw.reduce(function(a,w){return a+ +w.cal},0),'total kcal'],[Math.round(avg(cw.map(function(w){return+w.cal}))),'avg per workout'],[cw.length,'workouts logged']])+chart('Calories burned per workout',[{c:A,p:cw.map(function(w){return{d:w.date,v:+w.cal}})}])+'<h3 style="margin:6px 0">By muscle group</h3><div class="sub" style="margin-bottom:6px">Each workout’s calories are split evenly across the muscles you tagged on it.</div>'+trs(Object.keys(bm).sort(function(x,y){return bm[y]-bm[x]}).map(function(x){return[esc(x),Math.round(bm[x])+' kcal']}))}
+  var cw=W.filter(function(w){return+w.cal});
+  return h+st([[cw.reduce(function(a,w){return a+ +w.cal},0),'total kcal'],[Math.round(avg(cw.map(function(w){return+w.cal}))),'avg per workout'],[cw.length,'workouts logged']])+chart('Calories burned per workout',[{c:A,p:cw.map(function(w){return{d:w.date,v:+w.cal}})}])+trs(cw.slice().reverse().map(function(w){return[w.date+' · '+esc(w.name),w.cal+' kcal']}))}
  var B=S.bw.filter(function(b){return b.d>=cut}).sort(function(a,b){return a.d<b.d?-1:1});
  function bs(k,t){return chart(t,[{c:A,p:B.filter(function(b){return+b[k]}).map(function(b){return{d:b.d,v:+b[k]}})}])}
- h+='<div class="card"><b>Add an entry</b><div class="row"><div><label class="lab" for="b-d">Date</label><input id="b-d" type="date" value="'+today+'"></div><div><label class="lab" for="b-w">Weight ('+S.unit+')</label><input id="b-w" inputmode="decimal"></div></div><div class="row"><div><label class="lab" for="b-f">Body fat ('+S.unit+', optional)</label><input id="b-f" inputmode="decimal"></div><div><label class="lab" for="b-m">Muscle ('+S.unit+', optional)</label><input id="b-m" inputmode="decimal"></div></div><button class="btn block" style="margin-top:10px" data-addbw="1">Save entry</button></div>';
+ h+='<div class="card"><b>Add an entry</b><label class="lab" for="b-d">Date</label><input id="b-d" type="date" value="'+today+'"><label class="lab" for="b-w">Weight ('+S.unit+')</label><input id="b-w" inputmode="decimal"><div class="row"><div><label class="lab" for="b-f">Body fat ('+S.unit+', optional)</label><input id="b-f" inputmode="decimal"></div><div><label class="lab" for="b-m">Muscle ('+S.unit+', optional)</label><input id="b-m" inputmode="decimal"></div></div><button class="btn block" style="margin-top:10px" data-addbw="1">Save entry</button></div>';
  h+=bs('w','Body weight ('+S.unit+')');
  if(B.some(function(b){return+b.f}))h+=bs('f','Body fat ('+S.unit+')');
  if(B.some(function(b){return+b.m}))h+=bs('m','Muscle ('+S.unit+')');
@@ -197,26 +200,28 @@ function fromTpl(t,date){var d=newDraft(date);d.name=t.name;d.mu=t.mu.slice();d.
 function openEd(d,id){draft=d;editingId=id||null;edr();$('#ed').hidden=false;$('#ed').scrollTop=0}
 function edr(){
  var d=draft,KN=known();
- var h='<div class="in"><div class="edtop"><button class="link" data-cancel="1">Cancel</button><h2>'+(editingId?'Edit workout':'New workout')+'</h2><button class="btn" data-save="1">Save</button></div>';
- h+='<label class="lab" for="f-date">Date</label><input id="f-date" type="date" data-k="date" value="'+d.date+'">';
- h+='<label class="lab" for="f-name">Workout name</label><input id="f-name" data-k="name" placeholder="Push day, Legs, Full body…" value="'+esc(d.name)+'">';
+ var h='<div class="in"><div class="edtop"><button class="link" data-cancel="1">Cancel</button><h2>'+(tplMode?'New template':editingId?'Edit workout':'New workout')+'</h2><button class="btn" data-save="1">Save</button></div>';
+ if(!tplMode)h+='<label class="lab" for="f-date">Date</label><input id="f-date" type="date" data-k="date" value="'+d.date+'">';
+ h+='<label class="lab" for="f-name">'+(tplMode?'Template name':'Workout name')+'</label><input id="f-name" data-k="name" placeholder="Push day, Legs, Full body…" value="'+esc(d.name)+'">';
  h+='<span class="lab">Muscles hit</span><div>'+chips(ALL(),d.mu,'data-mu')+'</div>';
- h+='<div class="row"><div><label class="lab" for="f-dur">Duration (min)</label><input id="f-dur" data-k="dur" inputmode="numeric" value="'+esc(d.dur)+'"></div><div><label class="lab" for="f-cal">Calories (optional)</label><input id="f-cal" data-k="cal" inputmode="numeric" value="'+esc(d.cal)+'"></div></div>';
- h+='<div class="row"><div><label class="lab" for="f-hl">Heart rate low (optional)</label><input id="f-hl" data-k="hrL" inputmode="numeric" value="'+esc(d.hrL)+'"></div><div><label class="lab" for="f-hh">Heart rate high (optional)</label><input id="f-hh" data-k="hrH" inputmode="numeric" value="'+esc(d.hrH)+'"></div></div>';
+ if(!tplMode)h+='<div class="row"><div><label class="lab" for="f-dur">Duration (min)</label><input id="f-dur" data-k="dur" inputmode="numeric" value="'+esc(d.dur)+'"></div><div><label class="lab" for="f-cal">Calories (optional)</label><input id="f-cal" data-k="cal" inputmode="numeric" value="'+esc(d.cal)+'"></div></div>';
+ if(!tplMode)h+='<div class="row"><div><label class="lab" for="f-hl">Heart rate low (optional)</label><input id="f-hl" data-k="hrL" inputmode="numeric" value="'+esc(d.hrL)+'"></div><div><label class="lab" for="f-hh">Heart rate high (optional)</label><input id="f-hh" data-k="hrH" inputmode="numeric" value="'+esc(d.hrH)+'"></div></div>';
  h+='<h3 style="margin:18px 0 8px">Exercises</h3>';
  d.ex.forEach(function(e,i){
   var inp=e.isnew||!KN.length||(e.n&&KN.indexOf(e.n)<0);
   h+='<div class="card ex"><div class="h">'+(inp?'<input data-xn="'+i+'" placeholder="New exercise name" aria-label="New exercise name" value="'+esc(e.n)+'">':'<select data-xs="'+i+'" aria-label="Exercise"><option value="">Choose exercise…</option>'+KN.map(function(n){return'<option value="'+esc(n)+'"'+(n===e.n?' selected':'')+'>'+esc(n)+'</option>'}).join('')+'<option value="__new">＋ New exercise…</option></select>')+'<button class="link danger" data-rmex="'+i+'" aria-label="Remove exercise">Remove</button></div>'+(inp&&KN.length?'<button class="link" data-pick="'+i+'">Choose from my exercises</button>':'')+'<div class="hint" id="hint'+i+'">'+esc(hint(e.n))+'</div>';
   h+='<span class="lab">Muscles for this exercise</span><div>'+chips(ALL(),e.mu,'data-xm',i)+'</div>';
-  e.sets.forEach(function(s,j){h+='<div class="set"><span>'+(j+1)+'</span><input inputmode="decimal" placeholder="'+S.unit+'" aria-label="Weight, set '+(j+1)+'" data-x="'+i+'" data-s="'+j+'" data-f="w" value="'+esc(s.w)+'"><input inputmode="numeric" placeholder="reps" aria-label="Reps, set '+(j+1)+'" data-x="'+i+'" data-s="'+j+'" data-f="r" value="'+esc(s.r)+'"><button class="x" data-rmset="'+i+'.'+j+'" aria-label="Remove set">×</button></div>'});
-  h+='<button class="link" data-addset="'+i+'">+ Add set</button></div>'});
+  if(tplMode)h+='<label class="lab" for="tk'+i+'">Number of sets</label><input id="tk'+i+'" data-tk="'+i+'" inputmode="numeric" value="'+e.sets.length+'">';else e.sets.forEach(function(s,j){h+='<div class="set"><span>'+(j+1)+'</span><input inputmode="decimal" placeholder="'+S.unit+'" aria-label="Weight, set '+(j+1)+'" data-x="'+i+'" data-s="'+j+'" data-f="w" value="'+esc(s.w)+'"><input inputmode="numeric" placeholder="reps" aria-label="Reps, set '+(j+1)+'" data-x="'+i+'" data-s="'+j+'" data-f="r" value="'+esc(s.r)+'"><button class="x" data-rmset="'+i+'.'+j+'" aria-label="Remove set">×</button></div>'});
+  h+=(tplMode?'':'<button class="link" data-addset="'+i+'">+ Add set</button>')+'</div>'});
  h+='<button class="btn ghost block" data-addex="1">+ Add exercise</button>';
- h+='<label class="lab" for="f-notes">Notes</label><textarea id="f-notes" data-k="notes" rows="3" placeholder="How did it feel? Effort, sleep, injuries…">'+esc(d.notes)+'</textarea>';
- h+='<button class="btn ghost block" style="margin-top:12px" data-savetpl="1">Save as template</button>';
+ if(!tplMode)h+='<label class="lab" for="f-notes">Notes</label><textarea id="f-notes" data-k="notes" rows="3" placeholder="How did it feel? Effort, sleep, injuries…">'+esc(d.notes)+'</textarea>';
+ if(!tplMode)h+='<button class="btn ghost block" style="margin-top:12px" data-savetpl="1">Save as template</button>';
  if(editingId)h+='<button class="link danger" style="margin-top:16px" data-del="1">Delete this workout</button>';
  $('#ed').innerHTML=h+'</div>'}
-function closeEd(){$('#ed').hidden=true;draft=null;editingId=null;render()}
+function closeEd(){$('#ed').hidden=true;draft=null;editingId=null;tplMode=false;render()}
+function saveTpl(){var d=draft,KN=known(),nm=d.name.trim();if(!nm){alert('Give the template a name.');return}var ex=d.ex.filter(function(e){return e.n.trim()}).map(function(e){var n=e.n.trim(),c=KN.filter(function(k){return k.toLowerCase()===n.toLowerCase()})[0]||n;S.lib[c.toLowerCase()]={n:c,mu:e.mu.slice()};return{n:c,mu:e.mu.slice(),k:Math.max(1,e.sets.length)}});if(!ex.length){alert('Add at least one exercise.');return}S.tpl.push({id:'t'+Date.now().toString(36),name:nm,mu:d.mu.slice(),ex:ex});save();closeEd()}
 function saveEd(){
+ if(tplMode)return saveTpl();
  var d=draft,KN=known();
  d.ex=d.ex.filter(function(e){return e.n.trim()||sets(e).length}).map(function(e){var n=e.n.trim(),c=KN.filter(function(k){return k.toLowerCase()===n.toLowerCase()})[0]||n;if(c)S.lib[c.toLowerCase()]={n:c,mu:e.mu.slice()};return{n:c,mu:e.mu.slice(),sets:sets(e)}});
  if(!d.name.trim())d.name=d.mu.length?d.mu.slice(0,2).join(' + '):'Workout';
@@ -230,6 +235,7 @@ document.addEventListener('input',function(ev){
  if(!draft||!$('#ed').contains(t))return;
  if(t.dataset.k)draft[t.dataset.k]=t.value;
  else if(t.dataset.xn!=null){var i=+t.dataset.xn;draft.ex[i].n=t.value;var el=$('#hint'+i);if(el)el.textContent=hint(t.value)}
+ else if(t.dataset.tk!=null){var te=draft.ex[+t.dataset.tk],tn=Math.max(1,Math.min(20,+t.value||1));while(te.sets.length<tn)te.sets.push({w:'',r:''});te.sets.length=tn}
  else if(t.dataset.f){draft.ex[+t.dataset.x].sets[+t.dataset.s][t.dataset.f]=t.value}
 });
 document.addEventListener('change',function(ev){
@@ -260,6 +266,7 @@ document.addEventListener('click',function(ev){
  if(D.rg!=null){RG=+D.rg;return render()}
  if(D.day){sel=D.day;return render()}
  if(D.mon){cur.setMonth(cur.getMonth()+ +D.mon);return render()}
+ if(D.newtpl){tplMode=true;return openEd(newDraft(today))}
  if(D.new)return openEd(newDraft(sel));
  if(D.edit){var w=S.w.find(function(x){return x.id===D.edit});if(w)openEd(JSON.parse(JSON.stringify(w)),w.id);return}
  if(D.repeat){var w2=S.w.find(function(x){return x.id===D.repeat});if(w2)openEd(newDraft(today,w2));return}
